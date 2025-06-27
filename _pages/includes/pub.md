@@ -57,7 +57,7 @@
         <a href="https://arxiv.org/abs/2505.16854"><b>Think or Not? Selective Reasoning via Reinforcement Learning for Vision-Language Models</b></a><br>
         Jiaqi Wang†, Kevin QH. Lin†, James Cheng, Mike Z. Shou.<br>
         <p style="margin-top:3px">
-          <em>ICML EXAIT workshop, </em>2025<br>
+          <em>ICML EXAIT Workshop, </em>2025<br>
           [<a href="https://arxiv.org/abs/2505.16854">paper</a>]
           [<a href="https://github.com/kokolerk/TON">code</a>]
           [<a href="https://huggingface.co/collections/kolerk/ton-682ad9038395c21e228a645b">huggingface</a>]
@@ -94,6 +94,7 @@
     </tr>
   </tbody>
 </table>
+
 
 ## 2024
 
