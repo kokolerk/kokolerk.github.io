@@ -107,7 +107,7 @@
         <a href="https://proceedings.neurips.cc/paper_files/paper/2024/hash/62ab1c2cb4b03e717005479efb211841-Abstract-Conference.html"><b>Unlocking the capabilities of thought: A reasoning boundary framework to quantify and optimize chain-of-thought</b></a><br>
         Qiguang Chen, Libo Qin, <u>Jiaqi Wang</u>, Jingxuan Zhou, Wanxiang Che.<br>
         <p style="margin-top:3px">
-          <em>NeurIPS, </em>2024. <a style="color:#FA8072">oral</a><br>
+          <em>NeurIPS, </em>2024. <a style="color:#FA8072">Oral</a><br>
           [<a href="https://proceedings.neurips.cc/paper_files/paper/2024/hash/62ab1c2cb4b03e717005479efb211841-Abstract-Conference.html">paper</a>]
           [<a href="https://github.com/LightChen233/reasoning-boundary">code</a>]
         </p>
