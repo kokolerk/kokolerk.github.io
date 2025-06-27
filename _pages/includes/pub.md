@@ -80,7 +80,7 @@
     </tr>
     <tr>
       <td width="260">
-        <img src="images/divil.pdf" width="240px" style="box-shadow: 4px 4px 8px #888">
+        <img src="images/divil.png" width="240px" style="box-shadow: 4px 4px 8px #888">
       </td>
       <td>
         <a href="https://arxiv.org/pdf/2502.12413"><b>DivIL: Unveiling and Addressing Over-Invariance for Out-ofDistribution Generalization</b></a><br>
