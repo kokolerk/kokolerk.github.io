@@ -8,7 +8,7 @@
 				<tbody>
            <tr>
 						<td width="260">
-							<img src="figures/sbp.png" width="240px"
+							<img src="images/sbp.png" width="240px"
 								style="box-shadow: 4px 4px 8px #888">
 						</td>
 						<td><a
@@ -22,7 +22,7 @@
 					</tr>
 					<tr>
 						<td width="260">
-							<img src="figures/vt.png" width="240px"
+							<img src="images/vt.png" width="240px"
 								style="box-shadow: 4px 4px 8px #888">
 						</td>
 						<td><a
@@ -36,7 +36,7 @@
 					</tr>
 					<tr>
 						<td width="260">
-							<img src="figures/speech.png" width="240px"
+							<img src="images/speech.png" width="240px"
 								style="box-shadow: 4px 4px 8px #888">
 						</td>
 						<td><a
@@ -59,7 +59,7 @@
 				<tbody>
 					<tr>
 						<td width="260">
-							<img src="figures/ton.png" width="240px"
+							<img src="images/ton.png" width="240px"
 								style="box-shadow: 4px 4px 8px #888">
 						</td>
 						<td><a
@@ -76,7 +76,7 @@
 					</tr>
 					<tr>
 						<td width="260">
-							<img src="figures/pigdreamer.png" width="240px"
+							<img src="images/pigdreamer.png" width="240px"
 								style="box-shadow: 4px 4px 8px #888">
 						</td>
 						<td><a
@@ -91,7 +91,7 @@
 					</tr>
           <tr>
 						<td width="260">
-							<img src="figures/divil.pdf" width="240px"
+							<img src="images/divil.pdf" width="240px"
 								style="box-shadow: 4px 4px 8px #888">
 						</td>
 						<td><a
@@ -115,7 +115,7 @@
 				<tbody>
           <tr>
 						<td width="260">
-							<img src="figures/bound.png" width="240px"
+							<img src="images/bound.png" width="240px"
 								style="box-shadow: 4px 4px 8px #888">
 						</td>
 						<td><a
@@ -130,7 +130,7 @@
 				</tr>
 					<tr>
 						<td width="260">
-							<img src="figures/mists.png" width="240px"
+							<img src="images/mists.png" width="240px"
 								style="box-shadow: 4px 4px 8px #888">
 						</td>
 						<td><a
