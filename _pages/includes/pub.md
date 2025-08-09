@@ -30,6 +30,14 @@
         </p>
       </td>
     </tr>
+  </tbody>
+</table>
+
+
+## 2025
+
+<table id="tbPublications" width="100%">
+  <tbody>
     <tr>
       <td width="260">
         <img src="images/speech.png" width="240px" style="box-shadow: 4px 4px 8px #888">
@@ -38,17 +46,11 @@
         <a href="https://arxiv.org/pdf/2409.10969"><b>Enhancing Multilingual Speech Generation and Recognition Abilities in LLMs with Constructed Code-switched Data</b></a><br>
         Jing Xu, Daxin Tan, <u>Jiaqi Wang</u>, Xiao Chen.<br>
         <p style="margin-top:3px">
+          <em>IEEE ASRU</em><br>
           [<a href="https://arxiv.org/pdf/2409.10969">paper</a>]
         </p>
       </td>
     </tr>
-  </tbody>
-</table>
-
-## 2025
-
-<table id="tbPublications" width="100%">
-  <tbody>
     <tr>
       <td width="260">
         <img src="images/ton.png" width="240px" style="box-shadow: 4px 4px 8px #888">
