@@ -48,7 +48,6 @@
       </td>
     </tr>
     <tr>
-    <tr>
       <td width="260">
         <img src="images/speech.png" width="240px" style="box-shadow: 4px 4px 8px #888">
       </td>
