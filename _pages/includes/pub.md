@@ -2,10 +2,25 @@
 
 † indicates equal contribution. 
 
-## Preprints
+## 2025
 
 <table id="tbPublications" width="100%">
   <tbody>
+    <tr>
+      <td width="260">
+        <img src="images/ton.png" width="240px" style="box-shadow: 4px 4px 8px #888">
+      </td>
+      <td>
+        <a href="https://arxiv.org/abs/2505.16854"><b>Think or Not? Selective Reasoning via Reinforcement Learning for Vision-Language Models</b></a><br>
+        Jiaqi Wang†, Kevin QH. Lin†, James Cheng, Mike Z. Shou.<br>
+        <p style="margin-top:3px">
+          <em>NeurIPS, ICML EXAIT Workshop</em><br>
+          [<a href="https://arxiv.org/abs/2505.16854">paper</a>]
+          [<a href="https://github.com/kokolerk/TON">code</a>]
+          [<a href="https://huggingface.co/collections/kolerk/ton-682ad9038395c21e228a645b">huggingface</a>]
+        </p>
+      </td>
+    </tr>
     <tr>
       <td width="260">
         <img src="images/sbp.png" width="240px" style="box-shadow: 4px 4px 8px #888">
@@ -14,6 +29,7 @@
         <a href="https://arxiv.org/abs/2502.11394"><b>A Signed Graph Approach to Understanding and Mitigating Oversmoothing in GNNs</b></a><br>
         Jiaqi Wang†, Xinyi Wu†, James Cheng, Yifei Wang.<br>
         <p style="margin-top:3px">
+          <em>NeurIPS</em><br>
           [<a href="https://arxiv.org/abs/2502.11394">paper</a>]
         </p>
       </td>
@@ -26,18 +42,12 @@
         <a href="https://arxiv.org/pdf/2505.15510"><b>Visual Thoughts: A Unified Perspective of Understanding Multimodal Chain-of-Thought</b></a><br>
         Zihui Cheng, Qiguang Chen, Xiao Xu, <u>Jiaqi Wang</u>, Weiyun Wang, Hao Fei, Yidong Wang, Alex Jinpeng Wang, Zhi Chen, Wanxiang Che, Libo Qin.<br>
         <p style="margin-top:3px">
+          <em>NeurIPS</em><br>
           [<a href="https://arxiv.org/pdf/2505.15510">paper</a>]
         </p>
       </td>
     </tr>
-  </tbody>
-</table>
-
-
-## 2025
-
-<table id="tbPublications" width="100%">
-  <tbody>
+    <tr>
     <tr>
       <td width="260">
         <img src="images/speech.png" width="240px" style="box-shadow: 4px 4px 8px #888">
@@ -48,21 +58,6 @@
         <p style="margin-top:3px">
           <em>IEEE ASRU</em><br>
           [<a href="https://arxiv.org/pdf/2409.10969">paper</a>]
-        </p>
-      </td>
-    </tr>
-    <tr>
-      <td width="260">
-        <img src="images/ton.png" width="240px" style="box-shadow: 4px 4px 8px #888">
-      </td>
-      <td>
-        <a href="https://arxiv.org/abs/2505.16854"><b>Think or Not? Selective Reasoning via Reinforcement Learning for Vision-Language Models</b></a><br>
-        Jiaqi Wang†, Kevin QH. Lin†, James Cheng, Mike Z. Shou.<br>
-        <p style="margin-top:3px">
-          <em>ICML EXAIT Workshop</em><br>
-          [<a href="https://arxiv.org/abs/2505.16854">paper</a>]
-          [<a href="https://github.com/kokolerk/TON">code</a>]
-          [<a href="https://huggingface.co/collections/kolerk/ton-682ad9038395c21e228a645b">huggingface</a>]
         </p>
       </td>
     </tr>
@@ -96,6 +91,7 @@
     </tr>
   </tbody>
 </table>
+
 
 
 ## 2024

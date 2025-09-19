@@ -6,6 +6,7 @@
  * @Description: 
  * -->
 # 🔥 News
+- *2025.09*:  🎉 Our three papers are accepted by **NeurIPS 2025**.
 - *2025.08*:  🎉 Our [MLMT](https://arxiv.org/pdf/2409.10969) is accepted by **2025 IEEE ASRU**.
 - *2025.05*:  🎉 Our [TON](https://arxiv.org/abs/2505.16854) is accepted by **ICML 2025 EXAIT Workshop**.
 - *2025.04*:  🎉 Our [PIGDreamer](https://openreview.net/forum?id=mtk8tTKWs0) is accepted by **ICML 2025**.
