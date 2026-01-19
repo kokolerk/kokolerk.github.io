@@ -2,6 +2,45 @@
 
 † indicates equal contribution. 
 
+## 2026
+
+
+<table id="tbPublications" width="100%">
+  <tbody>
+    <tr>
+      <td width="260">
+        <img src="images/prost-llm.png" width="240px" style="box-shadow: 4px 4px 8px #888">
+      </td>
+      <td>
+        <b>PROST-LLM: PROGRESSIVELY ENHANCING THE SPEECH-TO-SPEECH TRANSLATION CAPABILITY IN LLMS</b></a><br>
+        Jing Xu, Jiaqi Wang, Daxin Tan, Xiao Chen.<br>
+        <p style="margin-top:3px">
+          <em>ICASSP 2026</em><br>
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="260">
+        <img src="images/video-reality-test.png" width="240px" style="box-shadow: 4px 4px 8px #888">
+      </td>
+      <td>
+        <a href="https://arxiv.org/abs/2512.13281"><b>Video Reality Test: Can AI-Generated ASMR Videos fool VLMs and Humans?</b></a><br>
+        Jiaqi Wang†, Weijia Wu†, Yi Zhan, Rui Zhao, Ming Hu, James Cheng, Wei Liu, Philip Torr, Kevin Qinghong Lin.<br>
+        <p style="margin-top:3px">
+          <em>arxiv</em><br>
+          [<a href="https://arxiv.org/abs/2512.13281">paper</a>]
+          [<a href="https://video-reality-test.github.io/">homepage</a>]
+          [<a href="https://github.com/video-reality-test/video-reality-test">code</a>]
+          [<a href="https://huggingface.co/datasets/kolerk/Video_Reality_Test">dataset</a>]
+          [<a href="https://huggingface.co/papers/2512.13281">huggingface paper</a>]
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
 ## 2025
 
 <table id="tbPublications" width="100%">
