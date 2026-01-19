@@ -7,7 +7,7 @@
  * -->
 # 🔥 News
 - *2026.01*:  🎉 Our Prost-LLM is accepted by **ICASSP 2026**.
-- *2025.12*:  🎉 Our [ASMR Video Reality Test benchmark](https://huggingface.co/datasets/kolerk/Video_Reality_Test) is now public and has reached over 2k downloads.
+- *2025.12*:  🎉 Our [ASMR Video Reality Test benchmark](https://huggingface.co/datasets/kolerk/Video_Reality_Test) is now public and has reached over **2k** downloads.
 - *2025.09*:  🎉 Our three papers are accepted by **NeurIPS 2025**.
 - *2025.08*:  🎉 Our [MLMT](https://arxiv.org/pdf/2409.10969) is accepted by **2025 IEEE ASRU**.
 - *2025.05*:  🎉 Our [TON](https://arxiv.org/abs/2505.16854) is accepted by **ICML 2025 EXAIT Workshop**.
