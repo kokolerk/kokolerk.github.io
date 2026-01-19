@@ -12,7 +12,7 @@
         <img src="images/prost-llm.png" width="240px" style="box-shadow: 4px 4px 8px #888">
       </td>
       <td>
-        <b>PROST-LLM: PROGRESSIVELY ENHANCING THE SPEECH-TO-SPEECH TRANSLATION CAPABILITY IN LLMS</b></a><br>
+        <b>PROST-LLM: PROGRESSIVELY ENHANCING THE SPEECH-TO-SPEECH TRANSLATION CAPABILITY IN LLMS</b><br>
         Jing Xu, Jiaqi Wang, Daxin Tan, Xiao Chen.<br>
         <p style="margin-top:3px">
           <em>ICASSP 2026</em><br>
