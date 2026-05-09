@@ -9,6 +9,21 @@
   <tbody>
     <tr>
       <td width="260">
+        <img src="images/tcod.png" width="240px" style="box-shadow: 4px 4px 8px #888">
+      </td>
+      <td>
+        <b>TCOD: Exploring Temporal Curriculum in On-Policy Distillation for Multi-turn Autonomous Agents</b><br>
+        Jiaqi Wang, Wenhao Zhang, Weijie Shi, Yaliang Li, James Cheng.<br>
+        <p style="margin-top:3px">
+          <em>arxiv</em><br>
+          [<a href="https://arxiv.org/abs/2604.24005">paper</a>]
+          [<a href="https://github.com/kokolerk/TCOD">code</a>]
+          [<a href="https://huggingface.co/papers/2604.24005">huggingface paper</a>]
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="260">
         <img src="images/prost-llm.png" width="240px" style="box-shadow: 4px 4px 8px #888">
       </td>
       <td>
@@ -24,10 +39,10 @@
         <img src="images/video-reality-test.png" width="240px" style="box-shadow: 4px 4px 8px #888">
       </td>
       <td>
-        <a href="https://arxiv.org/abs/2512.13281"><b>Video Reality Test: Can AI-Generated ASMR Videos fool VLMs and Humans?</b></a><br>
+        <a href="https://arxiv.org/abs/2512.13281"><b>VideoASMR-Bench: Can AI-Generated ASMR Videos Fool VLMs and Humans?</b></a><br>
         Jiaqi Wang†, Weijia Wu†, Yi Zhan, Rui Zhao, Ming Hu, James Cheng, Wei Liu, Philip Torr, Kevin Qinghong Lin.<br>
         <p style="margin-top:3px">
-          <em>arxiv</em><br>
+          <em>CVPR 2026 Workshop VGBE</em><br>
           [<a href="https://arxiv.org/abs/2512.13281">paper</a>]
           [<a href="https://video-reality-test.github.io/">homepage</a>]
           [<a href="https://github.com/video-reality-test/video-reality-test">code</a>]
