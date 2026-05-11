@@ -93,7 +93,7 @@
       </td>
       <td>
         <b>PROST-LLM: PROGRESSIVELY ENHANCING THE SPEECH-TO-SPEECH TRANSLATION CAPABILITY IN LLMS</b><br>
-        Jing Xu, Jiaqi Wang, Daxin Tan, Xiao Chen.<br>
+        Jing Xu, <u>Jiaqi Wang</u>, Daxin Tan, Xiao Chen.<br>
         <p style="margin-top:3px">
           <em>ICASSP 2026</em><br>
           [<a href="https://arxiv.org/abs/2601.16618">paper</a>]
