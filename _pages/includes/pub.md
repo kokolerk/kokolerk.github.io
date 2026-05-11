@@ -2,8 +2,7 @@
 
 † indicates equal contribution. 
 
-## 2026
-
+## First-author
 
 <table id="tbPublications" width="100%">
   <tbody>
@@ -15,23 +14,10 @@
         <b>TCOD: Exploring Temporal Curriculum in On-Policy Distillation for Multi-turn Autonomous Agents</b><br>
         Jiaqi Wang, Wenhao Zhang, Weijie Shi, Yaliang Li, James Cheng.<br>
         <p style="margin-top:3px">
-          <em>arxiv</em><br>
+          <em>arXiv 2026</em><br>
           [<a href="https://arxiv.org/abs/2604.24005">paper</a>]
           [<a href="https://github.com/kokolerk/TCOD">code</a>]
           [<a href="https://huggingface.co/papers/2604.24005">huggingface paper</a>]
-        </p>
-      </td>
-    </tr>
-    <tr>
-      <td width="260">
-        <img src="images/prost-llm.png" width="240px" style="box-shadow: 4px 4px 8px #888">
-      </td>
-      <td>
-        <b>PROST-LLM: PROGRESSIVELY ENHANCING THE SPEECH-TO-SPEECH TRANSLATION CAPABILITY IN LLMS</b><br>
-        Jing Xu, Jiaqi Wang, Daxin Tan, Xiao Chen.<br>
-        <p style="margin-top:3px">
-          <em>ICASSP 2026</em><br>
-          [<a href="https://arxiv.org/abs/2601.16618">paper</a>]
         </p>
       </td>
     </tr>
@@ -52,15 +38,6 @@
         </p>
       </td>
     </tr>
-  </tbody>
-</table>
-
-
-
-## 2025
-
-<table id="tbPublications" width="100%">
-  <tbody>
     <tr>
       <td width="260">
         <img src="images/ton.png" width="240px" style="box-shadow: 4px 4px 8px #888">
@@ -69,7 +46,7 @@
         <a href="https://arxiv.org/abs/2505.16854"><b>Think or Not? Selective Reasoning via Reinforcement Learning for Vision-Language Models</b></a><br>
         Jiaqi Wang†, Kevin QH. Lin†, James Cheng, Mike Z. Shou.<br>
         <p style="margin-top:3px">
-          <em>NeurIPS, ICML EXAIT Workshop</em><br>
+          <em>NeurIPS 2025, ICML 2025 EXAIT Workshop</em><br>
           [<a href="https://arxiv.org/abs/2505.16854">paper</a>]
           [<a href="https://github.com/kokolerk/TON">code</a>]
           [<a href="https://huggingface.co/collections/kolerk/ton-682ad9038395c21e228a645b">huggingface</a>]
@@ -84,8 +61,42 @@
         <a href="https://arxiv.org/abs/2502.11394"><b>A Signed Graph Approach to Understanding and Mitigating Oversmoothing in GNNs</b></a><br>
         Jiaqi Wang†, Xinyi Wu†, James Cheng, Yifei Wang.<br>
         <p style="margin-top:3px">
-          <em>NeurIPS</em><br>
+          <em>NeurIPS 2025</em><br>
           [<a href="https://arxiv.org/abs/2502.11394">paper</a>]
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="260">
+        <img src="images/divil.png" width="240px" style="box-shadow: 4px 4px 8px #888">
+      </td>
+      <td>
+        <a href="https://arxiv.org/pdf/2502.12413"><b>DivIL: Unveiling and Addressing Over-Invariance for Out-of-Distribution Generalization</b></a><br>
+        Jiaqi Wang†, Yuhang Zhou†, Zhixiong Zhang†, Qiguang Chen, Yongqiang Chen, James Cheng.<br>
+        <p style="margin-top:3px">
+          <em>TMLR 2025</em><br>
+          [<a href="https://arxiv.org/pdf/2502.12413">paper</a>]
+          [<a href="https://github.com/kokolerk/DivIL">code</a>]
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Non-first-author
+
+<table id="tbPublications" width="100%">
+  <tbody>
+    <tr>
+      <td width="260">
+        <img src="images/prost-llm.png" width="240px" style="box-shadow: 4px 4px 8px #888">
+      </td>
+      <td>
+        <b>PROST-LLM: PROGRESSIVELY ENHANCING THE SPEECH-TO-SPEECH TRANSLATION CAPABILITY IN LLMS</b><br>
+        Jing Xu, Jiaqi Wang, Daxin Tan, Xiao Chen.<br>
+        <p style="margin-top:3px">
+          <em>ICASSP 2026</em><br>
+          [<a href="https://arxiv.org/abs/2601.16618">paper</a>]
         </p>
       </td>
     </tr>
@@ -97,7 +108,7 @@
         <a href="https://arxiv.org/pdf/2505.15510"><b>Visual Thoughts: A Unified Perspective of Understanding Multimodal Chain-of-Thought</b></a><br>
         Zihui Cheng, Qiguang Chen, Xiao Xu, <u>Jiaqi Wang</u>, Weiyun Wang, Hao Fei, Yidong Wang, Alex Jinpeng Wang, Zhi Chen, Wanxiang Che, Libo Qin.<br>
         <p style="margin-top:3px">
-          <em>NeurIPS</em><br>
+          <em>NeurIPS 2025</em><br>
           [<a href="https://arxiv.org/pdf/2505.15510">paper</a>]
         </p>
       </td>
@@ -110,7 +121,7 @@
         <a href="https://arxiv.org/pdf/2409.10969"><b>Enhancing Multilingual Speech Generation and Recognition Abilities in LLMs with Constructed Code-switched Data</b></a><br>
         Jing Xu, Daxin Tan, <u>Jiaqi Wang</u>, Xiao Chen.<br>
         <p style="margin-top:3px">
-          <em>IEEE ASRU</em><br>
+          <em>IEEE ASRU 2025</em><br>
           [<a href="https://arxiv.org/pdf/2409.10969">paper</a>]
         </p>
       </td>
@@ -123,35 +134,12 @@
         <a href="https://openreview.net/pdf?id=mtk8tTKWs0"><b>PIGDreamer: Privileged Information Guided World Models for Safe Partially Observable Reinforcement Learning</b></a><br>
         Dongchi Huang, <u>Jiaqi Wang</u>, Yang Li, Chunhe Xia, Tianle Zhang, Kaige Zhang.<br>
         <p style="margin-top:3px">
-          <em>ICML</em><br>
+          <em>ICML 2025</em><br>
           [<a href="https://openreview.net/pdf?id=mtk8tTKWs0">paper</a>]
           [<a href="https://github.com/hggforget/PIGDreamer">code</a>]
         </p>
       </td>
     </tr>
-    <tr>
-      <td width="260">
-        <img src="images/divil.png" width="240px" style="box-shadow: 4px 4px 8px #888">
-      </td>
-      <td>
-        <a href="https://arxiv.org/pdf/2502.12413"><b>DivIL: Unveiling and Addressing Over-Invariance for Out-of-Distribution Generalization</b></a><br>
-        Jiaqi Wang†, Yuhang Zhou†, Zhixiong Zhang†, Qiguang Chen, Yongqiang Chen, James Cheng.<br>
-        <p style="margin-top:3px">
-          <em>TMLR</em><br>
-          [<a href="https://arxiv.org/pdf/2502.12413">paper</a>]
-          [<a href="https://github.com/kokolerk/DivIL">code</a>]
-        </p>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-
-
-## 2024
-
-<table id="tbPublications" width="100%">
-  <tbody>
     <tr>
       <td width="260">
         <img src="images/bound.png" width="240px" style="box-shadow: 4px 4px 8px #888">
@@ -160,7 +148,7 @@
         <a href="https://proceedings.neurips.cc/paper_files/paper/2024/hash/62ab1c2cb4b03e717005479efb211841-Abstract-Conference.html"><b>Unlocking the capabilities of thought: A reasoning boundary framework to quantify and optimize chain-of-thought</b></a><br>
         Qiguang Chen, Libo Qin, <u>Jiaqi Wang</u>, Jingxuan Zhou, Wanxiang Che.<br>
         <p style="margin-top:3px">
-          <em>NeurIPS, </em><a style="color:#FA8072">Oral</a><br>
+          <em>NeurIPS 2024, </em><a style="color:#FA8072">Oral</a><br>
           [<a href="https://proceedings.neurips.cc/paper_files/paper/2024/hash/62ab1c2cb4b03e717005479efb211841-Abstract-Conference.html">paper</a>]
           [<a href="https://github.com/LightChen233/reasoning-boundary">code</a>]
         </p>
@@ -174,7 +162,7 @@
         <a href="https://arxiv.org/abs/2401.08464"><b>Enhancing evolving domain generalization through dynamic latent representations</b></a><br>
         Binghui Xie, Yongqiang Chen, <u>Jiaqi Wang</u>, Kaiwen Zhou, Bo Han, Wei Meng, James Cheng.<br>
         <p style="margin-top:3px">
-          <em>AAAI, </em><a style="color:#FA8072">Oral</a><br>
+          <em>AAAI 2024, </em><a style="color:#FA8072">Oral</a><br>
           [<a href="https://arxiv.org/pdf/2401.08464">paper</a>]
         </p>
       </td>
