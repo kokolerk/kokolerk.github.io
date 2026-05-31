@@ -63,6 +63,7 @@
         <p style="margin-top:3px">
           <em>NeurIPS 2025</em><br>
           [<a href="https://arxiv.org/abs/2502.11394">paper</a>]
+          [<a href="https://github.com/kokolerk/sbp">code</a>]
         </p>
       </td>
     </tr>

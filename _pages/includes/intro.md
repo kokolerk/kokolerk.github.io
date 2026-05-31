@@ -8,3 +8,5 @@ On the application side, I am interested in building the efficient and effective
 Prior to coming to CUHK, I was an undergraduate student at Harbin Institute of Technology, where I worked as a research intern at [SCIR](https://ir.hit.edu.cn/), supervised by [Prof. Libo Qin](https://faculty.csu.edu.cn/qinlibo/zh_CN/index/204695/list/index.htm).
 
 If you are seeking any form of **academic collaboration**, please feel free to email me at [wjqkoko@gmail.com](mailto:wjqkoko@gmail.com).
+
+<p style="color:#8B4513;"><b>Expected to graduate in Fall 2027. I am currently looking for internship opportunities or full-time roles starting late 2027. Please feel free to reach out!</b></p>
