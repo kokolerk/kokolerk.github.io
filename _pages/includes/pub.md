@@ -11,7 +11,7 @@
         <img src="images/tcod.png" width="240px" style="box-shadow: 4px 4px 8px #888">
       </td>
       <td>
-        <b>TCOD: Exploring Temporal Curriculum in On-Policy Distillation for Multi-turn Autonomous Agents</b><br>
+        <a href="https://arxiv.org/abs/2604.24005"><b>TCOD: Exploring Temporal Curriculum in On-Policy Distillation for Multi-turn Autonomous Agents</b></a><br>
         Jiaqi Wang, Wenhao Zhang, Weijie Shi, Yaliang Li, James Cheng.<br>
         <p style="margin-top:3px">
           <em>arXiv 2026</em><br>
