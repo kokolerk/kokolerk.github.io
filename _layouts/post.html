@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{{ page.title }}</title>
+<meta name="description" content="{{ page.description }}" />
+
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+  };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+{% include blog-style.html %}
+</head>
+<body>
+
+<div id="progress-wrap"><div id="progress"></div></div>
+
+<nav class="side-toc" aria-label="目录"><ol></ol></nav>
+
+<header class="post-head">
+  <a class="back-home" href="/blog/">← 所有文章</a>
+  {% if page.eyebrow %}<div class="eyebrow">{{ page.eyebrow }}</div>{% endif %}
+  <h1 class="title">{{ page.title }}</h1>
+  {% if page.lede %}<p class="lede">{{ page.lede }}</p>{% endif %}
+  <div class="meta">
+    <span>{{ page.date | date: "%Y 年 %-m 月" }}</span>
+    {% if page.tags %}<span class="tags">{% for t in page.tags %}<span class="tag">{{ t }}</span>{% endfor %}</span>{% endif %}
+  </div>
+</header>
+
+<div class="wrap">
+
+  {% if page.hero %}
+  <img class="hero" src="{{ page.hero }}" alt="{{ page.hero_caption }}" />
+  {% if page.hero_caption %}<p style="text-align:center;font-size:13.5px;color:var(--muted);margin-top:10px;">{{ page.hero_caption }}</p>{% endif %}
+  {% endif %}
+
+  <div class="toc-card"><h2>目录</h2><ol></ol></div>
+
+  <hr class="div" />
+
+  {{ content }}
+
+</div>
+
+<script>
+  // ---- auto build TOC from sections ----
+  (function () {
+    var secs = Array.prototype.slice.call(document.querySelectorAll('.wrap section[id]'));
+    var cardOl = document.querySelector('.toc-card ol');
+    var sideOl = document.querySelector('.side-toc ol');
+    var sideNav = document.querySelector('.side-toc');
+    if (!secs.length) {
+      if (sideNav) sideNav.style.display = 'none';
+      var card = document.querySelector('.toc-card');
+      if (card) card.style.display = 'none';
+      return;
+    }
+    secs.forEach(function (sec) {
+      var h2 = sec.querySelector('h2.sec');
+      if (!h2) return;
+      var numEl = h2.querySelector('.num');
+      var num = numEl ? numEl.textContent.trim() : '';
+      var full = h2.textContent.trim();
+      var titleText = num && full.indexOf(num) === 0 ? full.slice(num.length).trim() : full;
+      var id = sec.id;
+
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      a.href = '#' + id;
+      a.innerHTML = (num !== '' ? '<span class="n">' + num + '</span>' : '') + titleText;
+      li.appendChild(a);
+      cardOl.appendChild(li);
+
+      var sli = document.createElement('li');
+      var sa = document.createElement('a');
+      sa.href = '#' + id;
+      sa.textContent = (num !== '' ? num + ' · ' : '') + titleText;
+      sli.appendChild(sa);
+      sideOl.appendChild(sli);
+    });
+
+    // ---- scroll-spy ----
+    var sideLinks = Array.prototype.slice.call(document.querySelectorAll('.side-toc a'));
+    if (sideLinks.length) {
+      var byId = {};
+      sideLinks.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            sideLinks.forEach(function (a) { a.classList.remove('active'); });
+            var active = byId[e.target.id];
+            if (active) active.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-15% 0px -75% 0px', threshold: 0 });
+      secs.forEach(function (s) { observer.observe(s); });
+    }
+  })();
+
+  // ---- reading progress ----
+  var progress = document.getElementById('progress');
+  function onScroll() {
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    progress.style.width = pct + '%';
+  }
+  document.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+
+</body>
+</html>
