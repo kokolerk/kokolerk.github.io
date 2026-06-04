@@ -1,0 +1,177 @@
+---
+layout: post
+title: "On-Policy 蒸馏的两个坑：训推不一致，与后期 reward 塌成 0/1"
+date: 2026-06-04
+permalink: /blog/onpolicy-distillation-pitfalls/
+eyebrow: "On-Policy Distillation · Notes"
+tags: [On-Policy蒸馏, 训推不一致, TCoD, 强化学习, 数值精度]
+lede: "记两个在 on-policy 蒸馏（TCoD）里真实踩到的坑：一个是同样权重却对不上的<strong>「训推不一致」</strong>，一个是训练后期 teacher 给学生的信号塌成 <strong>0/1</strong> 的现象。前者是算子层面的数值问题，后者是蒸馏信号的结构性问题。"
+description: "On-policy 蒸馏里的两个工程坑：训练-推理不一致（operator-level mismatch）与后期 reward 的 0/1 塌缩，含成因、规模影响与解法。"
+hero: /images/blog_distill/train-infer-mismatch.svg
+hero_caption: "同一份权重，推理侧 decode 出的 μ 和训练侧 prefill 重算的 π_θ 并不相等。"
+---
+{% raw %}
+  <section id="sec-0">
+    <h2 class="sec"><span class="num">0</span>两个坑</h2>
+    <blockquote class="key"><p><strong>同一份权重，不同算子路径算出来的概率不相等；而当学生学到后期，老师能给的「软监督」会塌成非 0 即 1。</strong></p></blockquote>
+    <p>这两件事都发生在 on-policy distillation 里：学生在自己的分布上采样，老师在这些采样上给信号。第一个坑藏在<strong>基础设施的数值层面</strong>，第二个坑藏在<strong>蒸馏信号的结构里</strong>。下面分别拆开。</p>
+  </section>
+
+  <hr class="div" />
+
+  <section id="sec-1">
+    <h2 class="sec"><span class="num">1</span>坑一：训推不一致 —— 同样的权重，算出来的概率却不一样</h2>
+    <p>先看 on-policy 蒸馏一轮里到底发生了几次前向计算：</p>
+    <ol>
+      <li><strong>学生采样</strong>：学生用<strong>推理引擎</strong>（vLLM / SGLang）<strong>逐 token 解码（decode）</strong>生成回答，顺手吐出采样概率 → 行为策略 $\mu$。</li>
+      <li><strong>学生重算 logprob</strong>：训练时要算梯度，得在<strong>训练引擎</strong>（FSDP / Megatron）里对整条序列做一次 <strong>prefill（整段并行前向）</strong> → $\pi_\theta$。</li>
+      <li><strong>老师打分</strong>：老师（冻结）对同一条序列做 <strong>prefill</strong>，给出 $\pi_{T}$。</li>
+    </ol>
+    <p>蒸馏损失大致是在学生采样的轨迹上算逐 token 的 KL（on-policy 蒸馏通常用 reverse KL，$\mathrm{KL}(\pi_{\theta}\,\|\,\pi_{T})$）。这里藏着三层不一致：<strong>前两层是「同一个 token，logprob 却不同」（数值问题）；第三层更狠，是「连 token 本身都变了」（正确性问题）。</strong></p>
+
+    <h3>① decode vs prefill 不一致</h3>
+    <ul>
+      <li>采样时 token 是<strong>一个一个 decode</strong> 出来的（带 KV cache，每步等效 batch 很小）。</li>
+      <li>重算 logprob 时是<strong>一次性 prefill 整段</strong>（所有位置并行的大矩阵乘）。</li>
+      <li>两条路走<strong>不同 kernel</strong>，数值会有细微差别 → 采样时记下的 logprob ≠ prefill 重算的 logprob。这就是「两次推理对不上」。</li>
+    </ul>
+
+    <h3>② 训练引擎 vs 推理引擎不一致（经典 TIM）</h3>
+    <p>vLLM 和 FSDP 即使加载<strong>完全相同的 checkpoint</strong>，因为 kernel / 算子实现不同，对同一输入给出的下一 token 分布也不同。后果：采样策略 $\mu$ ≠ 训练策略 $\pi_\theta$，<strong>本该 on-policy 的训练悄悄变成 off-policy</strong>。而且这种偏差是「基础设施层面的噪声」，不是 PPO mini-step 那种 off-policy，光靠 clip 治不了。</p>
+
+    <h3>③ token-in-token-out：别让分词漂移把训练带偏</h3>
+    <p>前两层是「同样的 token，logprob 不同」；这一层是「<strong>token 本身就不是同一串</strong>」，业内叫 <strong>retokenization drift（再分词漂移）</strong>。数据从推理侧传到训练侧有两种做法：</p>
+    <ul>
+      <li><strong>token-in → token-out（TITO，对的）</strong>：推理引擎吐 <strong>token id</strong>（+ 每 token 的 logprob/mask），训练侧<strong>直接吃 id</strong>，全程不碰文本。</li>
+      <li><strong>token-in → text-out（常见但有坑）</strong>：引擎把 token <strong>detokenize 成文本</strong>返回（OpenAI 风格的 <code>chat.completions</code> 就是这样），训练时再把文本 <strong>重新 tokenize</strong> 回 id。</li>
+    </ul>
+    <p>问题在于 <strong>$\text{tokenize}(\text{detokenize}(\text{ids})) \neq \text{ids}$</strong>：哪怕字符串一模一样，重新编码出来的 token 边界也可能不同——</p>
+    <ul>
+      <li><strong>BPE 合并是贪心、文本驱动的</strong>：模型可以采样出「非规范」切分，转成文本再编码会回到规范切分，序列就变了。</li>
+      <li><strong>byte-level BPE 的半个字符</strong>、空格 / 前导空格（▁）、special token、chat template 的还原都不是双射。</li>
+      <li>多轮更糟：<strong>工具输出、context compaction、子 agent</strong> 让事后从文本日志重建 token 序列几乎必然在某些位置对不齐。</li>
+    </ul>
+    <figure>
+      <img src="/images/blog_distill/retokenization-drift.svg" alt="retokenization drift：同一字符串被重新切成不同的 token" />
+      <figcaption>同一个字符串重新编码，token 边界可能变化——训练用的 token 不再是采样时的那串。</figcaption>
+    </figure>
+    <p>后果比数值不一致更硬：训练时算 logprob/梯度的 token 和实际采样的不是同一串 → <strong>挂错了标的、本质变成 off-policy</strong>；而且 <strong>loss mask 也会错</strong>（只有模型自己生成的 behavior-policy token 该训，工具/模板等插入 token 该 mask 掉）。这不是小事——有工作（Strands-SGLang）报告非 TITO 的 agent RL 在 step 50 前就训崩了。</p>
+    <blockquote><p><strong>解法：全程带着 token id 走，绝不 round-trip 文本。</strong>vLLM 的 OpenAI 端点用 <code>"return_token_ids": true</code> 会连 <code>prompt_token_ids</code> 和 <code>token_ids</code> 一起返回；SGLang 原生 <code>/generate</code> 直接给 token + logprob + mask。只有外部插入的文本（工具/用户）才做一次规范 tokenize 并 mask 掉——这样「生成的 token = 训练的 token = 算 logprob 的 token」。</p></blockquote>
+  </section>
+
+  <hr class="div" />
+
+  <section id="sec-2">
+    <h2 class="sec"><span class="num">2</span>为什么是「算子层面」</h2>
+    <p>根因不在算法，而在 GPU 上浮点算子的实现细节：</p>
+    <ul>
+      <li><strong>prefill 大矩阵乘 vs decode 的 GEMV</strong>：tiling、分块、reduction 顺序不同。</li>
+      <li><strong>不同 attention kernel</strong>（FlashAttention / SDPA / 推理引擎自研 kernel）。</li>
+      <li><strong>batch size 一变，kernel 就换实现</strong>（batch-variant）：<code>train_micro_batch_size</code> 与 <code>logprob_batch_size</code> 不一致，同一序列就走了不同计算路径。</li>
+      <li><strong>张量并行（TP）的 all-reduce 求和顺序</strong>不同 → 浮点加法不满足结合律，结果就漂。</li>
+      <li><strong>bf16 的锅</strong>：bf16 只有 7 位尾数，舍入误差大，逐 token 自回归会<strong>累积放大</strong>。把 bf16 换成 fp16（10 位尾数）能把序列级 logprob 比值的失配缩小约 20 倍（一个量级以上）。</li>
+      <li><strong>MoE 路由</strong>：推理时选的专家和训练时不一定一致，又多一层不一致。</li>
+    </ul>
+    <blockquote><p>一句话：数学上「应该相等」，但因为算子实现、并行策略、精度不同，<strong>数值上不相等</strong>。</p></blockquote>
+  </section>
+
+  <hr class="div" />
+
+  <section id="sec-3">
+    <h2 class="sec"><span class="num">3</span>7B / 14B 上重要吗？</h2>
+    <p>常见误区是「只有大模型才需要管」。其实<strong>它和参数量没有直接关系</strong>——大部分诊断 TIM 的工作就是在 7B 级别的小模型（如 DeepSeek-R1-Distill-Qwen-7B、Qwen 1.5B–7B）上复现并看到训练崩的。真正决定严重程度的是另一组变量：</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>放大因素</th><th>为什么放大</th><th>和「大模型」的关系</th></tr></thead>
+        <tbody>
+          <tr><td>生成长度</td><td>自回归误差<strong>逐 token 累积</strong>，序列越长分叉越大</td><td>长 CoT / 长程 agent 最致命，<strong>与尺寸无关</strong></td></tr>
+          <tr><td>精度 bf16/fp16</td><td>bf16 尾数少，舍入误差大</td><td>与尺寸无关，<strong>最主因</strong></td></tr>
+          <tr><td>TP 并行度</td><td>all-reduce 求和顺序变，浮点不结合</td><td>大模型 TP 切得多 → 偏差更大</td></tr>
+          <tr><td>MoE 路由</td><td>推理/训练选的专家可能不同</td><td>大模型多是 MoE → 多一层不一致</td></tr>
+          <tr><td>数据复用 / off-policy 程度</td><td>越 off-policy，$\mu$ 与 $\pi_\theta$ 差越远</td><td>与尺寸无关</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>直接放大它的是<strong>「长序列 + bf16 + 复用数据」</strong>，这些在 7B 上完全可以很严重；而 TP、MoE 随规模加重——这才是「大模型更明显」这一印象的真正来源。<strong>不是参数多本身让它变严重，而是大模型往往同时叠了 MoE + 大 TP + 长上下文。</strong></p>
+    <p>什么时候可基本忽略：<strong>输出短、严格 on-policy 不复用数据、dense + 小 TP、用 fp16</strong>，或做的是纯离线蒸馏 / SFT（不采样）。但只要任务是<strong>长链推理 / 多轮 agent</strong>，哪怕 7B 也得认真对待。</p>
+  </section>
+
+  <hr class="div" />
+
+  <section id="sec-4">
+    <h2 class="sec"><span class="num">4</span>怎么应对训推不一致</h2>
+    <ol>
+      <li><strong>数值对齐</strong>：重算 logprob 的引擎/精度/batch 配置尽量和采样一致，<code>train_micro_batch_size == logprob_batch_size</code>。</li>
+      <li><strong>确定性 / batch-invariant kernels</strong>：用对 batch 不敏感的确定性算子，做到和训练引擎零失配。</li>
+      <li><strong>换 FP16</strong>：最省事的一招，从根上压住 bf16 的累积舍入误差。</li>
+      <li><strong>直接用推理引擎返回的 logprob</strong> 当 $\mu$，不再用训练引擎重算去近似。</li>
+      <li><strong>坚持 token-in-token-out（TITO）</strong>：全程传 token id 而非文本，杜绝 retokenization drift（见 §1③）。</li>
+      <li><strong>重要性采样矫正</strong>：既然变成 off-policy，就用 IS 比值纠偏并截断控方差（TIS）：
+        <p>$$ w_t=\min\!\Big(\frac{\pi_\theta(o_t)}{\mu(o_t)},\,C\Big) $$</p>
+        序列级版本叫 MIS，长序列上通常比 token 级更稳。</li>
+    </ol>
+  </section>
+
+  <hr class="div" />
+
+  <section id="sec-5">
+    <h2 class="sec"><span class="num">5</span>坑二：后期 reward 塌成 0/1</h2>
+    <p>在 TCoD 的训练后期观察到：老师给学生的 reward（这里指对学生采样 token 的「认可度」，比如 teacher 概率 $\pi_{T}(o_t)\in[0,1]$）<strong>几乎都集中在 0 或 1 两端</strong>——要么完全认可、要么完全否定，中间 0.3~0.7 的「软」信号基本消失。这通常是<strong>预期内</strong>的，有几层成因：</p>
+    <ul>
+      <li><strong>老师本身近 one-hot</strong>：代码/数学等结构化任务上，老师分布很尖，对任意 token 非 1 即 0，中间值只出现在真正有分叉的位置。</li>
+      <li><strong>软信号被消化掉了</strong>：早期学生犯的「差一点」错误落在老师 prob 0.2~0.6 区间——梯度最肥的地方。学生学会后，这些中间地带先被纠正，<strong>只剩「已学会(→1)」和「啃不动(→0)」两类</strong>。</li>
+      <li><strong>学生分布也变尖</strong>（熵下降）：on-policy 采样下学生越自信，采的越是自己的 argmax，老师要么同意(1)要么不同意(0)。</li>
+    </ul>
+    <p>三者叠加 → <strong>老师尖 + 学生也尖 + 中间软样本被消化 → reward 自然双峰到 {0,1}</strong>。这恰恰说明 temporal curriculum 把容易的、信息量大的部分吃完了。</p>
+
+    <figure>
+      <img src="/images/blog_distill/reward-bimodal.svg" alt="teacher 认可度分布从早期铺开到后期双峰塌到 0/1（示意）" />
+      <figcaption>示意图：随训练推进，老师对学生 token 的认可度从「铺开」变成「双峰塌到 0 / 1」，中间的软信号消失。</figcaption>
+    </figure>
+
+    <h3>5.1 还有一个「假 0/1」：精度下溢</h3>
+    <p>如果 reward 直接取 teacher prob，而在 <strong>bf16/fp16</strong> 下算：匹配 token 的概率太接近 1 会被<strong>舍入成 1.0</strong>，不匹配的太小会<strong>下溢成 0.0</strong>。也就是本来还有梯度的软信号，被低精度<strong>量化</strong>成了硬 0/1。排查方法：把 reward / logprob 那段计算单独提到 <strong>fp32</strong>，看双峰是否缓解；缓解了就说明至少有一部分是数值假象。</p>
+  </section>
+
+  <hr class="div" />
+
+  <section id="sec-6">
+    <h2 class="sec"><span class="num">6</span>是收敛，还是塌缩？</h2>
+    <p>0/1 化本身<strong>不能直接判断好坏</strong>，要配合其它指标一起看：</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>同时观察</th><th>健康收敛</th><th>病态塌缩 / 课程耗尽</th></tr></thead>
+        <tbody>
+          <tr><td>reward≈1 的占比</td><td>持续上升</td><td>上不去，或 0/1 各半卡住</td></tr>
+          <tr><td>下游 eval 准确率</td><td>上升或高位平台</td><td>早就不动了</td></tr>
+          <tr><td>学生 token 熵 / 多样性</td><td>适中、稳定</td><td><strong>骤降</strong>、开始重复复读</td></tr>
+          <tr><td>reward=0 的 token</td><td>越来越少，集中在真难点</td><td>一直一大片，且学生很自信地错</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul>
+      <li><strong>偏左列</strong>：学生已把老师能「软教」的都学到了，reward 双峰是收敛的自然标志，梯度变小很正常。</li>
+      <li><strong>偏右列</strong>：要么是 <strong>entropy / mode collapse</strong>（学生塌成少数高置信模式，1 来自退化输出），要么是<strong>课程耗尽</strong>（剩下全是老师也救不动的硬残差）。</li>
+    </ul>
+  </section>
+
+  <hr class="div" />
+
+  <section id="sec-7">
+    <h2 class="sec"><span class="num">7</span>怎么把梯度救回来</h2>
+    <ol>
+      <li><strong>首选：用全词表 KL，而不是只对采样 token 取 teacher prob 当标量 reward</strong>。0/1 的根源就是「只看了采样 token 那一个数」；改成对整份词表分布算 KL 后，即使采样 token 老师给≈1，<strong>其余词表上的分布差异仍然提供梯度</strong>，根本不会塌到 0/1。这比调温度更该排第一。</li>
+      <li><strong>蒸馏温度是个有「甜区」的小旋钮，不是越大越好</strong>。先分清两种温度：
+        <ul>
+          <li><strong>采样温度</strong>（生成时怎么抽 token）调大 → 生成内容会越来越离谱，<strong>不要用它来救 0/1</strong>。</li>
+          <li><strong>蒸馏 / loss 温度</strong>只作用在算 KL 时的 softmax $p_i=\mathrm{softmax}(z_i/T)$ 上，<strong>不参与生成</strong>（OPD 里老师只打分、不采样），所以它本身不会让老师吐出离谱内容。</li>
+          <li>但即便是 loss 温度，$T$ 太大也会坏事：目标分布趋近<strong>均匀</strong> → 等于告诉学生「所有 token 差不多好」→ 学生分布被压平、质量崩；而且它会<strong>改变学生收敛到的最优</strong>（收敛到「被加热过的老师」），是有偏的。实操取 $T\approx 1.2\text{–}2$ 的小幅软化，并<strong>先对老师分布做 top-k / top-p 截断再软化</strong>，只在合理候选里软化，避免把概率质量摊到垃圾长尾上。</li>
+        </ul>
+      </li>
+      <li><strong>控学生采样温度 / 加 entropy bonus</strong>：防熵塌缩，保持探索，让采样还能覆盖到老师不确定的区域。</li>
+      <li><strong>课程切换</strong>：对那批 reward=0 的硬残差，换更强/更近的老师，或干脆<strong>转成 RLVR</strong>（可验证奖励）去啃——蒸馏的天花板就是老师，硬骨头得靠环境奖励。</li>
+      <li><strong>排查精度</strong>：先用 fp32 排除把软信号假性量化成 0/1。</li>
+    </ol>
+    <blockquote class="key"><p><strong>两个坑其实指向同一句话：on-policy 蒸馏里，「学生采样的分布」和「用来算梯度/打分的分布」必须尽量是同一个东西——数值上要一致（坑一），信号上要还有区分度（坑二）。</strong></p></blockquote>
+  </section>
+{% endraw %}
