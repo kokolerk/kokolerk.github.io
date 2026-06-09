@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <rect width="720" height="300" rx="14" fill="#ffffff"/>
+  <text x="360" y="32" text-anchor="middle" font-size="17" font-weight="700" fill="#1b1d1e">Hybrid Attention + MTP：省 KV，把剩余算力喂给投机解码</text>
+  <rect x="26" y="70" width="468" height="150" rx="12" fill="#f6f8f8" stroke="#d8dedd" stroke-width="1.5"/>
+  <text x="42" y="92" font-size="13.5" font-weight="700" fill="#69747d">Hybrid Block × M=8</text>
+  <rect x="42" y="104" width="64" height="78" rx="8" fill="#e4f3f0" stroke="#0f7d72" stroke-width="1.5"/>
+  <rect x="112" y="104" width="64" height="78" rx="8" fill="#e4f3f0" stroke="#0f7d72" stroke-width="1.5"/>
+  <rect x="182" y="104" width="64" height="78" rx="8" fill="#e4f3f0" stroke="#0f7d72" stroke-width="1.5"/>
+  <rect x="252" y="104" width="64" height="78" rx="8" fill="#e4f3f0" stroke="#0f7d72" stroke-width="1.5"/>
+  <rect x="322" y="104" width="64" height="78" rx="8" fill="#e4f3f0" stroke="#0f7d72" stroke-width="1.5"/>
+  <text x="74" y="139" text-anchor="middle" font-size="13" font-weight="700" fill="#0f7d72">SWA</text>
+  <text x="144" y="139" text-anchor="middle" font-size="13" font-weight="700" fill="#0f7d72">SWA</text>
+  <text x="214" y="139" text-anchor="middle" font-size="13" font-weight="700" fill="#0f7d72">SWA</text>
+  <text x="284" y="139" text-anchor="middle" font-size="13" font-weight="700" fill="#0f7d72">SWA</text>
+  <text x="354" y="139" text-anchor="middle" font-size="13" font-weight="700" fill="#0f7d72">SWA</text>
+  <text x="74" y="160" text-anchor="middle" font-size="11" fill="#69747d">窗 128</text>
+  <text x="144" y="160" text-anchor="middle" font-size="11" fill="#69747d">窗 128</text>
+  <text x="214" y="160" text-anchor="middle" font-size="11" fill="#69747d">窗 128</text>
+  <text x="284" y="160" text-anchor="middle" font-size="11" fill="#69747d">窗 128</text>
+  <text x="354" y="160" text-anchor="middle" font-size="11" fill="#69747d">窗 128</text>
+  <rect x="404" y="104" width="74" height="78" rx="8" fill="#f7ece0" stroke="#c9742a" stroke-width="1.8"/>
+  <text x="441" y="139" text-anchor="middle" font-size="13" font-weight="700" fill="#c9742a">GA</text>
+  <text x="441" y="160" text-anchor="middle" font-size="11" fill="#c9742a">全局</text>
+  <text x="260" y="206" text-anchor="middle" font-size="13" fill="#1b1d1e">5 层局部滑窗 : 1 层全局  =  5 : 1  →  KV-cache 减约 6×</text>
+  <path d="M494 145 C 514 145, 520 145, 536 145" fill="none" stroke="#9aa6ad" stroke-width="2"/>
+  <polygon points="536,145 527,140 527,150" fill="#9aa6ad"/>
+  <rect x="540" y="104" width="156" height="78" rx="10" fill="#ffffff" stroke="#0f7d72" stroke-width="1.8"/>
+  <text x="618" y="132" text-anchor="middle" font-size="14" font-weight="700" fill="#0f7d72">MTP draft · 0.33B</text>
+  <text x="618" y="153" text-anchor="middle" font-size="12" fill="#69747d">dense FFN + SWA</text>
+  <text x="618" y="171" text-anchor="middle" font-size="12" fill="#69747d">3 层 → 2.6× 解码</text>
+  <text x="360" y="250" text-anchor="middle" font-size="12.5" fill="#69747d">SWA 省下的算力本是「剩余」，MTP 把它变成并行验证的 draft token —— 这是 MiMo 不选 MLA 的关键</text>
+  <text x="360" y="270" text-anchor="middle" font-size="11.5" fill="#9aa6ad">注：第一层用「GA + dense FFN」稳定早期表示（图中略）</text>
+</svg>

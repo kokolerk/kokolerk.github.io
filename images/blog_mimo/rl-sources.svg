@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <rect width="720" height="320" rx="14" fill="#ffffff"/>
+  <text x="360" y="32" text-anchor="middle" font-size="17" font-weight="700" fill="#1b1d1e">追赶机器：RL 系统大量集成，原创集中在蒸馏</text>
+  <rect x="28" y="58" width="320" height="208" rx="12" fill="#f6f8f8" stroke="#d8dedd" stroke-width="1.5"/>
+  <text x="188" y="84" text-anchor="middle" font-size="13.5" font-weight="700" fill="#69747d">借来的零件（集成）</text>
+  <text x="52" y="118" font-size="13" fill="#1b1d1e">· SGLang + Megatron-LM —— 推理 / 训练引擎</text>
+  <text x="52" y="148" font-size="13" fill="#1b1d1e">· GRPO advantage —— DeepSeek</text>
+  <text x="52" y="178" font-size="13" fill="#1b1d1e">· partial rollout —— Kimi / AReaL</text>
+  <text x="52" y="208" font-size="13" fill="#1b1d1e">· 训推重要性采样 —— IcePop</text>
+  <text x="52" y="238" font-size="13" fill="#1b1d1e">· QK-Clip 稳训练 —— Kimi</text>
+  <rect x="372" y="58" width="320" height="208" rx="12" fill="#ffffff" stroke="#0f7d72" stroke-width="1.6"/>
+  <text x="532" y="84" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0f7d72">自研</text>
+  <text x="396" y="118" font-size="13" fill="#1b1d1e">· R3 路由重放 —— 修 MoE 训推不一致</text>
+  <text x="396" y="148" font-size="13" fill="#1b1d1e">· Data Scheduler —— 序列级动态调度</text>
+  <text x="396" y="178" font-size="13" fill="#1b1d1e">· Toolbox + Tool Manager —— 工具调度</text>
+  <rect x="392" y="196" width="280" height="56" rx="9" fill="#f7ece0" stroke="#c9742a" stroke-width="1.8"/>
+  <text x="408" y="221" font-size="13.5" font-weight="700" fill="#c9742a">★ MOPD 多师 on-policy 蒸馏</text>
+  <text x="408" y="241" font-size="11.5" fill="#69747d">唯一算法级原创，但本质是「压缩」而非「探索」</text>
+  <text x="360" y="296" text-anchor="middle" font-size="12.5" fill="#9aa6ad">工程整合非常扎实；要领跑，还得看蒸馏之上的 RL scaling 能不能起量</text>
+</svg>

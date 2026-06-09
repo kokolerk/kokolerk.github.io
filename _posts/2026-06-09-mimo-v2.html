@@ -1,0 +1,211 @@
+---
+layout: post
+title: "MiMo-V2 全解：一台精巧的「追赶机器」"
+date: 2026-06-09
+permalink: /blog/mimo-v2/
+eyebrow: "MiMo-V2 · Notes"
+tags: [MiMo, MoE, HybridAttention, MTP, MOPD, AgenticRL]
+lede: "把小米 MiMo-V2 系列（Flash / Pro / 2.5-Pro）的技术报告、发布博客和罗福莉 3.5 小时访谈串成一条线：<strong>架构怎么选、训练怎么 scaling、数据和 RL 系统怎么搭</strong>，最后落到一个判断——它是一台<strong>把已知方法高效组装起来的「追赶机器」</strong>，强在工程整合与蒸馏，弱在原创算法与生态闭环。"
+description: "MiMo-V2 Flash/Pro/2.5-Pro 的架构（Hybrid Attention + MTP）、MOPD 后训练、RL 基建与数据构造全解，附与 MiniMax / Kimi / Claude 的对比和批判。"
+---
+{% raw %}
+  <section id="sec-0">
+    <h2 class="sec"><span class="num">0</span>一句话</h2>
+    <blockquote class="key"><p><strong>MiMo-V2 用一套「为长上下文效率而生」的稀疏架构（Hybrid Attention + MTP）压低成本，用蒸馏（MOPD）压低后训练时间，在 Agent / Coding 上高效追平 Claude；但它的原创性集中在蒸馏，RL 系统多为已知组件的集成。</strong></p></blockquote>
+    <p>下面按「架构 → 训练 → 数据 → 2.5-Pro → 访谈 → 评价」走一遍，数字均来自 MiMo-V2-Flash 技术报告（arXiv:2601.02780）、小米发布博客与张小珺对罗福莉的访谈。</p>
+  </section>
+
+  <hr class="div" />
+
+  <section id="sec-1">
+    <h2 class="sec"><span class="num">1</span>Flash 与 Pro：同源双子</h2>
+    <p>一个容易被误解的点：<strong>Flash 不是先于 Pro 的「热身」，两者是同期训练、架构几乎相同的双子</strong>。罗福莉在访谈里说得很直接——大部分训练在 2025 下半年完成，Flash 是相对小的活，训好就发了（2025-12-16）；Pro 因为是 1T 级别，<strong>训练数值不稳定问题多得多，所以训得更久</strong>。</p>
+    <p>几个反直觉的细节：</p>
+    <ul>
+      <li><strong>大模型对脏数据更耐受</strong>：Flash 和 Pro 用的是同一批数据，但「更大的模型似乎对更脏的数据容忍度更高」（罗的原话，她也强调这只是「似乎」）。所以 1T 的主要挑战<strong>不在数据，而在 scaling 时冒出来的各种不稳定</strong>。</li>
+      <li><strong>没有 deadline</strong>：「模型训好了再发」，雷军同意即可。大几千卡停一天就是一两百万的成本，但他们允许为排查一个 loss spike 停一两周。</li>
+    </ul>
+  </section>
+
+  <hr class="div" />
+  <section id="sec-2">
+    <h2 class="sec"><span class="num">2</span>架构：Hybrid Attention 与参数</h2>
+
+    <h3>2.1 一张参数表</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th></th><th>Flash</th><th>Pro</th><th>2.5-Pro</th></tr></thead>
+        <tbody>
+          <tr><td>总参 / 激活</td><td>309B / 15B</td><td>&gt;1T / 42B</td><td>1.02T / 42B</td></tr>
+          <tr><td>SWA : GA 比例</td><td>5 : 1</td><td>7 : 1</td><td>6 : 1</td></tr>
+          <tr><td>滑窗大小</td><td>128</td><td>128</td><td>128</td></tr>
+          <tr><td>上下文</td><td>256K</td><td>1M</td><td>1M</td></tr>
+          <tr><td>专家（总/激活）</td><td>256 / 8，无共享专家</td><td>—</td><td>—</td></tr>
+          <tr><td>开放性</td><td>开源 (MIT)</td><td>API-only</td><td>开源</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Flash 共 48 层 = 39 层 SWA + 9 层 GA，只有第一层用「GA + dense FFN」稳定早期表示，其余都挂稀疏 MoE。SWA / GA 都用 GQA。</p>
+
+    <h3>2.2 为什么敢这么稀疏</h3>
+    <p>128-token 的滑窗加 5:1 比例是相当激进的——长上下文按理会掉点。它能成立靠两件事：</p>
+    <ul>
+      <li><strong>learnable attention sink bias</strong>（借鉴 gpt-oss）：给 softmax 分母加一个可学习项，允许某些 token 少分或不分注意力。报告做了消融：去掉 sink 明显掉点，加上后能追平甚至超过全 GA 基线。报告也老实承认 sink 的理论机制「仍是开放问题」，这是个经验性的赌注。</li>
+      <li><strong>一个反直觉结论</strong>：W=128 比 W=512 更好。小窗逼 SWA 只管局部、把长程依赖交给 GA 层，分工更清晰。</li>
+    </ul>
+    <p>罗在访谈里补了一条更通用的判断：<strong>「Full Attention 的层数比系数比更重要」</strong>——更大的模型只要保住 GA 总层数不变、多堆 SWA 层，就能在更大规模上用更高的稀疏比。这也解释了 Pro 为什么敢上 7:1：更大的架构 GA 层数本来就多，拉高稀疏比可以让长文效率和 Flash 持平，而把省下的预算用来 scaling 智能。</p>
+    <blockquote><p><strong>大模型能吃更稀疏，小模型太稀疏会崩。</strong>所以这套比例不是固定标准，是随规模变的实验结论。</p></blockquote>
+  </section>
+
+  <hr class="div" />
+  <section id="sec-3">
+    <h2 class="sec"><span class="num">3</span>MTP：省 KV、加速，以及为什么不选 MLA</h2>
+    <p>MTP（Multi-Token Prediction）块刻意做得很轻：用 dense FFN 而非 MoE，用 SWA 而非 GA，每块只有 0.33B。预训练挂一层（提升基座），后训练复制成 K 层，推理时当 draft model 做自投机解码。</p>
+    <ul>
+      <li><strong>效果</strong>：3 层 MTP 下最高 3.6 的接受长度、2.6× 解码加速。接受长度和 next-token 交叉熵强相关（低熵任务如 WebDev 接受得更长）。</li>
+      <li><strong>不带幻觉</strong>：draft token 要被主模型 verify，预测准才采纳，所以是纯加速、不损质量。</li>
+    </ul>
+    <p>真正值得记的是<strong>为什么不选当时主流的 MLA</strong>（DeepSeek、Kimi、GLM 都在用）。罗的解释很关键：</p>
+    <blockquote><p>MLA 在设计之初就把<strong>访存与计算的比例做到了完美临界点</strong>——这意味着它<strong>没有富余空间</strong>。你想再上 MTP 加速，会立刻卡在计算 bound 上，不划算。所以那些 MLA 模型基本都没上 MTP，也就更慢。</p></blockquote>
+    <p>MiMo 反着来：Hybrid Attention 的 SWA 层省下大量算力，<strong>推理时计算严重「剩余」</strong>，正好拿 MTP 把这块剩余吃掉，达到访存与计算的再平衡。换句话说，<strong>MTP 不是孤立选择，是 Hybrid 架构留出富余后的自然延伸</strong>。MLA 的前提（后训练不重要、推理卡固定）在 Agent 时代失效了，而简洁架构留的富余度，恰好给后训练和不同场景适配腾了空间。</p>
+    <figure>
+      <img src="/images/blog_mimo/hybrid-mtp-arch.svg" alt="Hybrid Attention 块（5 层 SWA + 1 层 GA）配合 MTP draft 的结构示意" />
+      <figcaption>5 层 128 窗口的滑窗注意力配 1 层全局注意力，省下约 6× 的 KV-cache；省出的算力用 MTP 当 draft model 投机解码——这正是 MiMo 不选 MLA 的逻辑。</figcaption>
+    </figure>
+  </section>
+
+  <hr class="div" />
+  <section id="sec-4">
+    <h2 class="sec"><span class="num">4</span>训练流程：从预训练到 MOPD</h2>
+
+    <h3>4.1 预训练（27T tokens，FP8）</h3>
+    <pre><code>Stage 1  0–22T   通用语料，32K 上下文，打基础
+Stage 2  22–26T  上采样代码 + 约 5% 合成推理数据
+Stage 3  26–27T  上下文扩到 256K，上采样长程依赖数据</code></pre>
+    <p>FP8 混合精度（attention 输出投影、embedding、输出头保 BF16，MoE router 保 FP32）。</p>
+
+    <h3>4.2 后训练：MOPD 三阶段</h3>
+    <p>MOPD（Multi-Teacher On-Policy Distillation）是这套报告的核心创新，目标是解决「跷跷板」（提升一个能力掉另一个）和「学习低效」：</p>
+    <ol>
+      <li><strong>SFT</strong>：打基础指令能力。</li>
+      <li><strong>领域专家训练</strong>：用独立 RL 分别训 coding / search / tool-use / 数学 / 推理 / 安全等 teacher，每个 teacher 在自己域内做到最强。</li>
+      <li><strong>MOPD</strong>：把多 teacher 融合建模成 on-policy RL——学生从自己分布采样，teacher 通过 <strong>reverse-KL 的 token-level reward</strong> 给监督，再叠加可验证的 outcome reward（GRPO 风格 ORM）。</li>
+    </ol>
+    <p>报告里 IcePop 式的训推重要性采样、丢弃训推差异过大的 token，都用在这里。</p>
+    <figure>
+      <img src="/images/blog_mimo/mopd-pipeline.svg" alt="MOPD 三阶段：SFT、领域专家 RL、多教师 on-policy 蒸馏" />
+      <figcaption>MOPD 把多个领域 teacher 的能力，通过 token 级 KL reward 蒸给一个学生，再叠加可验证的 outcome reward。能力上界约等于最强 teacher。</figcaption>
+    </figure>
+
+    <h3>4.3 RL 系统：一张「借了谁」的溯源表</h3>
+    <p>底座是 <strong>SGLang（推理）+ Megatron-LM（训练），训推都 FP8</strong>。上面三个扩展模块解决三个具体问题。但把它们逐一拆开看，会发现<strong>真正自研的不多</strong>：</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>组件</th><th>解决什么</th><th>来源</th></tr></thead>
+        <tbody>
+          <tr><td>R3（Rollout Routing Replay）</td><td>MoE 训推路由不一致：训练复用 rollout 选中的专家</td><td>自研 / ma2025</td></tr>
+          <tr><td>request-level prefix cache</td><td>多轮 agent 复用上轮 KV+路由，不用 radix cache 以保路由一致</td><td>自研</td></tr>
+          <tr><td>Data Scheduler</td><td>序列级调度、按 pass rate 动态采样，解决 GPU 空闲</td><td>扩展自家 Seamless Rollout Engine</td></tr>
+          <tr><td>partial rollout + staleness 截断 IS</td><td>切分超长轨迹、限制陈旧度</td><td>Kimi / AReaL</td></tr>
+          <tr><td>训推重要性采样</td><td>丢弃训推差异大的 token</td><td>IcePop</td></tr>
+          <tr><td>QK-Clip</td><td>压住过大的 attention logits 稳训练</td><td>Kimi</td></tr>
+          <tr><td>Toolbox + Tool Manager</td><td>工具资源 quota/QPS、环境预热、序列级异步 reward</td><td>自研（基于 Ray）</td></tr>
+          <tr><td>ORM advantage</td><td>可验证 outcome reward</td><td>GRPO / DeepSeek</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <blockquote><p>结论先放这里：<strong>MiMo 的 RL 侧是「已知组件的高质量集成」，唯一算法级原创是 MOPD（蒸馏），不是 RL 调度本身。</strong>这一点在第 8 节会展开。</p></blockquote>
+  </section>
+
+  <hr class="div" />
+  <section id="sec-5">
+    <h2 class="sec"><span class="num">5</span>数据：来源与造法</h2>
+    <p>Agent 数据沿两个维度 scale：<strong>环境多样性</strong>和<strong>算力</strong>。四类环境，真实来源做骨架、合成做规模化，reward 全靠可验证信号。</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>类型</th><th>量</th><th>来源 / 造法</th><th>Reward / Verifier</th></tr></thead>
+        <tbody>
+          <tr><td>Code Agent</td><td>90K 真实 + 30K 合成 prompt</td><td>真实 GitHub issues；repo 快照自动建容器环境（8 语言 70% 成功率、1 万+ k8s pod）；scaffold 只给 bash / str_replace / finish 三个原子工具，不预设 workflow</td><td>可验证单元测试</td></tr>
+          <tr><td>Terminal Agent</td><td>~30K</td><td>Stack Overflow / Exchange → 生成 query + Dockerfile + test case，按安装成功率/难度/pass rate 过滤</td><td>执行 + 测试</td></tr>
+          <tr><td>Web Dev Agent</td><td>—</td><td>真实人写网页 → Playwright 渲染视频 → 多模态判别器筛选；逆向出 query，覆盖 8 类</td><td>vision verifier 对视频打分（视觉 + 功能 + 可执行）</td></tr>
+          <tr><td>Search Agent</td><td>—</td><td>scaffold（search/open/find）；query 由种子实体递归扩展 fact-graph，难度随关系链深度上升</td><td>可验证答案</td></tr>
+          <tr><td>Function-calling</td><td>—</td><td>合成应用环境，工具集来自 tool-call graph（显式数据依赖 + 隐式逻辑依赖）</td><td>状态/数据传播校验</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>非 agentic 的 reward：可验证域用「程序化工具 + LLM judge」双重；主观维度（helpfulness / safety）用 rubric-based LLM judge 按详细评分表打分。</p>
+    <p>两个附录里的工程细节值得记：</p>
+    <ul>
+      <li><strong>Reward hacking（附录 B）</strong>：官方 SWE-Bench 镜像有 bug——ground-truth commit 没删干净，模型会用 <code>git log --all</code> 偷看未来 commit 刷分。换新镜像并复查后才确认无 hacking。</li>
+      <li><strong>Context management（附录 C）</strong>：把工具/文档/DB 统一抽象成 Unix 文件用 bash 取；上下文用量超 30% 就激进压缩（总结 + 归档到 memory 文件）。这招让 BrowseComp 从 45.4 拉到 58.3——也就是说<strong>那个高分有相当一部分来自 context 工程，不是模型本身</strong>。</li>
+    </ul>
+  </section>
+
+  <hr class="div" />
+
+  <section id="sec-6">
+    <h2 class="sec"><span class="num">6</span>MiMo-V2.5-Pro（2026-04-27）</h2>
+    <p>旗舰版第一次开源（permissive license）。1.02T / 42B，Hybrid 6:1，1M 上下文，FP8(E4M3) 混合精度，架构与训练完全沿用 Flash 那套（27T 预训练 + MOPD 三阶段）。</p>
+    <p>主打不是榜分，而是<strong>长程任务的连贯性</strong>——给它人类要几天的活让它自主跑：</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>任务</th><th>结果</th></tr></thead>
+        <tbody>
+          <tr><td>Rust 写 SysY 编译器（北大课设，全流程）</td><td>672 次工具调用 / 4.3 小时 / 隐藏测试 233/233</td></tr>
+          <tr><td>全功能视频编辑器</td><td>1868 次工具调用 / 11.5 小时 / 8192 行代码</td></tr>
+          <tr><td>模拟 EDA（FVF-LDO，TSMC 180nm）</td><td>接 ngspice + Claude Code 当 harness，约 1 小时，6 指标全达标</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>官方提了个新词 <strong>harness awareness</strong>：模型会主动利用环境能力、管理自己的 memory、塑造 context。Token 效率上，ClawEval 64% Pass³ 每条轨迹只用约 70K tokens，比 Opus 4.6 / Gemini 3.1 Pro / GPT-5.4 少 40–60%。</p>
+    <blockquote><p>注意一个细节：那几个惊艳 demo 都是<strong>拿 Claude Code 当 harness</strong> 跑的——一部分功劳属于框架，不全是模型。</p></blockquote>
+  </section>
+
+  <hr class="div" />
+  <section id="sec-7">
+    <h2 class="sec"><span class="num">7</span>罗福莉访谈：几个判断</h2>
+    <p>3.5 小时访谈里，几个能落到地的判断（不含鸡汤）：</p>
+    <ul>
+      <li><strong>第二幕</strong>：竞争从「预训练主导的 Chat 时代」转向「后训练主导的 Agent 时代」，所有人重回起跑线，预训练代差基本没有，Anthropic 路径正确是共识。</li>
+      <li><strong>卡比例 3:1:1</strong>：研究 : 预训练 : 后训练 = 3:1:1。Chat 时代是夸张的 3:5:1；顶尖团队现在预/后训练已是 1:1。</li>
+      <li><strong>1T 是入场券</strong>：是「做到对标 Claude Opus 4.6」的入场券，不是泛指。智力上限由<strong>参数量 + Context 共同决定</strong>。几千卡训练，研究卡要再多 3–5 倍。</li>
+      <li><strong>Code 为什么泛化</strong>：1M 上下文的真实数据现实里只有两类——代码和书籍，书籍信号发散、代码关联强。<strong>Code 拉上限，训其他领域保下限。</strong></li>
+      <li><strong>1M 难在哪</strong>：难在构造真正稠密监督的 1M 数据（成本极高），所以长文能力是缓慢提升；目前只有 Claude 4.6 真正稳，Gemini「号称强其实不行」。</li>
+      <li><strong>定价逻辑变了</strong>：Flash 按推理成本定价（输入 0.1 / 输出 0.3 美元每百万 token，极致性价比）；Pro 改为<strong>按产生的价值定价</strong>，所以涨价。</li>
+      <li><strong>组织</strong>：100 人但实习生比例高、真正迭代二三十人；没组、没职级、平权、热爱驱动；开始倾向招大二大三本科生（「没被污染」）。<strong>「环境比经验更重要」</strong>，她甚至用自家术语形容团队「互相 MOPD」。</li>
+      <li><strong>同行</strong>：MiniMax 转 agent 最早最快（10B 激活做 agent，后训练敏捷）；但入场要「1T 基座 + 敏捷」两者兼具，国内还没人同时具备。</li>
+      <li><strong>AGI</strong>：现在约 20%，今年到 60–70%，两年内实现；「AI 训练 AI」是标志节点。</li>
+    </ul>
+  </section>
+
+  <hr class="div" />
+
+  <section id="sec-8">
+    <h2 class="sec"><span class="num">8</span>评价：为什么说它是「追赶机器」</h2>
+    <p>前面都是「它做了什么」。这一节是我的判断：MiMo 工程上非常扎实，但有几个值得讨论的局限，让它现在更像<strong>「能高效追平、暂时还看不到领跑的支点」</strong>。下面几条都带着「这也可能只是阶段性选择」的前提，不是定性它不行。</p>
+    <figure>
+      <img src="/images/blog_mimo/rl-sources.svg" alt="MiMo RL 系统的组件溯源：大量集成，原创集中在 MOPD 蒸馏" />
+      <figcaption>把 RL 系统拆开看，多数是已知组件的高质量集成，唯一算法级原创是 MOPD——而蒸馏本质是「压缩已有能力」，不是「探索新能力」。</figcaption>
+    </figure>
+
+    <h3>8.1 MOPD 本质是「压缩」，不是「探索」</h3>
+    <p>MOPD 是多教师 on-policy 蒸馏，<strong>学生能力上界 ≈ 最强 teacher 的上界</strong>。而罗自己承认「RL scaling 的算力跟预训练还不在一个水位，到同水位才会分享」——也就是说<strong>真正拓展能力边界的 RL scaling 规模还很小，主力是用蒸馏把已有 teacher 高效合并</strong>。蒸馏擅长追赶（搬运+压缩已有能力），RL scaling 才负责发现新能力。这跟它整套「集成已知组件」的工程气质是一致的，也跟 <a href="/blog/minimax-rl/">MiniMax 那条押 RL scaling 的路</a>形成对比。</p>
+
+    <h3>8.2 「无跷跷板」更像是「大部分域无跷跷板」</h3>
+    <p>报告 Table 7 主张 MOPD「保留最强 teacher 的能力、无 trade-off」，这在数学/代码等域上确实成立。但同一张表里也有几处回退：<strong>Creative Writing 90.1 → 86.2（-3.9）</strong>、<strong>BrowseComp 51.7 → 45.4（-6.3）</strong>、GPQA -0.6、SWE -0.8。规律比较清楚：<strong>可验证、reward 密集的域涨得稳，创意写作和开放检索这种「软」域会有所回退。</strong></p>
+    <p>这其实和 <a href="/blog/onpolicy-distillation-pitfalls/">reverse-KL on-policy 蒸馏的已知特性</a>对得上：mode-seeking 倾向 → 多样性收窄。用我之前那篇博客的分析，正好能解释官方表格里那个没被特别强调的 creative writing 掉分——可以看作 benchmark 上的一个实证，而不是说这套方法有硬伤。</p>
+
+    <h3>8.3 知识容量是一个值得注意的取舍</h3>
+    <p>激活参数小（Flash 15B）是为成本和速度做的取舍，代价也写在报告里：<strong>SimpleQA 20.6 vs Kimi 35.3、中文 C-SimpleQA 61.5 vs Kimi 77.6、GlobalMMLU 76.6 vs DeepSeek 82</strong>，报告自承「knowledge capacity 偏低」。罗的思路是「Context &gt; 参数」——知识尽量靠检索补，这在 Agent 范式下是合理选择，但事实召回（尤其中文知识）能在多大程度上靠检索补齐，还需要观察。</p>
+    <p>另一个可以讨论的点是定位：MiMo 当前火力主要压在 agentic / coding，在 general writing（Arena-Hard hard prompt 54.1，低于 Kimi / GPT 的 72）和中文知识上相对偏弱。考虑到小米的消费场景，<strong>这两块未来大概率还需要补</strong>——当然，这也可能是阶段性的优先级选择，而非能力天花板。</p>
+
+    <h3>8.4 它把世界观押在 harness 上，但 harness 不在自己手里</h3>
+    <p>罗反复强调「模型与 Agent 框架协同进化」。值得说明的是，主流 harness 现在大多已开源——OpenClaw 开源（后被 OpenAI 收购，但开源属性没变），Claude Code 用户侧也已经开源，所以「黑盒」这个说法已经不准确，任何人都能读、能改。</p>
+    <p>但这反而凸显了另一个问题：<strong>开源意味着大家都能用同一套框架，框架本身不再是壁垒；真正的差异回到「谁的模型 + 谁的分发」。</strong>MiMo 目前是把自己的模型接到别人主导的框架上（自家 demo 和研究提速也都在用 Claude Code），而 Anthropic / OpenAI 是「模型 + 自家框架 + 分发」一体。所以 MiMo 真正可能抄不走的护城河，未必在云端 agent 竞赛，而更可能在<strong>小米独有的硬件分发（端侧小模型、IoT、机器人）</strong>——这也和罗讲「开源取决于你有没有别人短期拿不下的生态位」的逻辑一致。</p>
+
+    <h3>8.5 激进稀疏是「优雅退化」，不是「峰值更强」</h3>
+    <p>GSM-Infinite Hard 从 16K 的 37.7 退到 128K 的 29.0——它的卖点是退化平缓，这点确实做到了；但同时也要看到<strong>短上下文上别人推理更强</strong>（DeepSeek-V3.2 在 16K 是 50.4），长文推理 MRCR 45.7 vs Gemini 89.7、Terminal-Bench 2.0 38.5 vs Gemini 54.2。换句话说，<strong>它的长上下文优势更多体现在成本、速度和检索鲁棒，而不是长文深推理的峰值</strong>。这和「为 long context 而生」的叙事并不矛盾，但值得区分清楚：高效 ≠ 推理最强。</p>
+
+    <blockquote class="key"><p><strong>MiMo-V2 是一台精巧的追赶机器：hybrid + MTP 压成本、MOPD 压时间、RL 系统是已知组件的高质量集成。它能高效追平 Claude；至于能否领跑，取决于两件还没看到答案的事——蒸馏之上的 RL scaling 能不能起来，以及它能否把硬件分发这个独有生态位真正用起来。</strong></p></blockquote>
+  </section>
+{% endraw %}
