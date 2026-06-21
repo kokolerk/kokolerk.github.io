@@ -6,6 +6,7 @@
  * @Description: 
  * -->
 # 🔥 News
+- *2026.06*:  ✍️ New blog post out: [On-Policy Distillation Pitfalls](https://kokolerk.github.io/blog/onpolicy-distillation-pitfalls/) — sharing the lessons and pitfalls behind our [TCOD](https://arxiv.org/abs/2604.24005) work. Welcome to read and discuss on my [blog](https://kokolerk.github.io/blog/)!
 - *2026.05*:  🎉 Our [VideoASMR-Bench](https://huggingface.co/datasets/kolerk/Video_Reality_Test) is now public and has reached over **5k** downloads and accepted by **CVPR 2026 VGBE Workshop**.
 - *2026.01*:  🎉 Our Prost-LLM is accepted by **ICASSP 2026**.
 - *2025.09*:  🎉 Our three papers are accepted by **NeurIPS 2025**.
