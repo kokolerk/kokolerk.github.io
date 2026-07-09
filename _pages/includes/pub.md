@@ -14,7 +14,7 @@
         <a href="https://arxiv.org/abs/2604.24005"><b>TCOD: Exploring Temporal Curriculum in On-Policy Distillation for Multi-turn Autonomous Agents</b></a><br>
         Jiaqi Wang, Wenhao Zhang, Weijie Shi, Yaliang Li, James Cheng.<br>
         <p style="margin-top:3px">
-          <em>arXiv 2026</em><br>
+          <em>COLM 2026</em><br>
           [<a href="https://arxiv.org/abs/2604.24005">paper</a>]
           [<a href="https://github.com/kokolerk/TCOD">code</a>]
           [<a href="https://huggingface.co/papers/2604.24005">huggingface paper</a>]
