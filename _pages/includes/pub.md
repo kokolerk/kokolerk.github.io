@@ -4,7 +4,7 @@
 
 ## First-author
 
-<table id="tbPublications" width="100%">
+<table class="publication-list" width="100%">
   <tbody>
     <tr>
       <td width="260">
@@ -86,7 +86,7 @@
 
 ## Non-first-author
 
-<table id="tbPublications" width="100%">
+<table class="publication-list" width="100%">
   <tbody>
     <tr>
       <td width="260">

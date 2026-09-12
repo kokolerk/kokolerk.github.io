@@ -1,0 +1,5 @@
+.news-archive { margin: -.25em 0 1.5em; font: inherit; }
+.news-archive > summary { width: fit-content; padding: .25em 0; color: inherit; font: inherit; cursor: pointer; }
+.news-archive > summary:hover { text-decoration: underline; text-underline-offset: 3px; }
+.news-archive > summary:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.news-archive > ul { margin-top: .75em; }

@@ -1,0 +1,23 @@
+/* Compact experience rows, aligned with the homepage typography. */
+.career-list { font-family: inherit; font-size: inherit; color: inherit; display: grid; margin: .6em 0 1.5em; }
+.career-card { display: grid; grid-template-columns: 11em minmax(0, 1fr); column-gap: 16px; row-gap: 5px; padding: 15px 0; border-bottom: 1px solid #edf0f2; }
+.career-card:first-child { padding-top: 4px; }
+.career-card:last-child { border-bottom: 0; padding-bottom: 0; }
+.career-date { padding-top: 3px; color: inherit; font-size: inherit; font-variant-numeric: tabular-nums; line-height: inherit; white-space: nowrap; }
+.career-header { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.career-list .career-logo { flex: 0 0 32px; width: 32px; height: 32px; margin: 0; padding: 2px; object-fit: contain; box-sizing: border-box; border: 0; border-radius: 0; background: transparent; }
+.career-header > div { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 9px; }
+.career-list .career-company { color: inherit; font-size: inherit; font-weight: 700; text-decoration: none; border: 0; line-height: inherit; }
+.career-list a.career-company:hover { color: #527da4; text-decoration: underline; }
+.career-role { color: inherit; font-size: inherit; line-height: inherit; }
+.career-location { color: inherit; }
+.career-details { grid-column: 2; padding-left: 44px; color: inherit; font-size: inherit; line-height: inherit; }
+.career-list .career-details p { margin: 0 0 2px; font-size: inherit; line-height: inherit; }
+.career-list .career-details p:last-child { margin-bottom: 0; }
+.career-list .career-team { color: inherit; font-weight: 400; }
+@media (max-width: 640px) {
+  .career-card { grid-template-columns: minmax(0, 1fr); padding: 13px 0; gap: 5px; }
+  .career-date { padding: 0; font-size: inherit; }
+  .career-details { grid-column: 1; }
+  .career-header > div { gap: 1px 8px; }
+}

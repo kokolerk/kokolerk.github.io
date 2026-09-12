@@ -1,25 +1,19 @@
-<!--
- * @Author: Jiaqi Wang
- * @LastEditors: Jiaqi Wang
- * @Date: 2023-10-10 21:30:10
- * @LastEditTime: 2025-05-19 10:22:15
- * @Description: 
- * -->
 # 🔥 News
+
+- *2026.09*: 🎉 Our [VideoASMR-Bench dataset](https://huggingface.co/datasets/kolerk/Video_Reality_Test) has now surpassed **6k downloads**.
 - *2026.07*:  🎉 Our [TCOD](https://arxiv.org/abs/2604.24005) is accepted by **COLM 2026**.
-- *2026.06*:  ✍️ New blog post out: [On-Policy Distillation Pitfalls](https://kokolerk.github.io/blog/onpolicy-distillation-pitfalls/) — sharing the lessons and pitfalls behind our [TCOD](https://arxiv.org/abs/2604.24005) work. Welcome to read and discuss on my [blog](https://kokolerk.github.io/blog/)!
-- *2026.05*:  🎉 Our [VideoASMR-Bench](https://huggingface.co/datasets/kolerk/Video_Reality_Test) is now public and has reached over **5k** downloads and accepted by **CVPR 2026 VGBE Workshop**.
-- *2026.01*:  🎉 Our Prost-LLM is accepted by **ICASSP 2026**.
+- *2026.05*: 🎉 Our [VideoASMR-Bench](https://video-reality-test.github.io/) was accepted by **CVPR 2026 VGBE Workshop**. The [dataset](https://huggingface.co/datasets/kolerk/Video_Reality_Test) is publicly available.
+- *2026.01*:  🎉 Our [Prost-LLM](https://arxiv.org/abs/2601.16618) is accepted by **ICASSP 2026**.
 - *2025.09*:  🎉 Our three papers are accepted by **NeurIPS 2025**.
 - *2025.08*:  🎉 Our [MLMT](https://arxiv.org/pdf/2409.10969) is accepted by **2025 IEEE ASRU**.
-- *2025.05*:  🎉 Our [TON](https://arxiv.org/abs/2505.16854) is accepted by **ICML 2025 EXAIT Workshop**.
-- *2025.04*:  🎉 Our [PIGDreamer](https://openreview.net/forum?id=mtk8tTKWs0) is accepted by **ICML 2025**.
-- *2025.02*:  🎉 Our [DivIL](https://openreview.net/forum?id=2Zan4ATYsh) is accepted by **TMLR 2025**.
-- *2024.09*: 🎉 Our [Reasoning Boundary](https://arxiv.org/abs/2410.05695) is accepted by **NeurIPS 2024 (Oral)**.
-- *2024.03*: 🎉 Our [MISTS](https://ojs.aaai.org/index.php/AAAI/article/view/29536) is accepted by **AAAI 2024 (Oral)** .
 
-
-
-<!--
-
-mask news -->
+<details class="news-archive">
+  <summary>Older news</summary>
+  <ul>
+  <li><em>2025.05</em>:  🎉 Our <a href="https://arxiv.org/abs/2505.16854">TON</a> is accepted by <strong>ICML 2025 EXAIT Workshop</strong>.</li>
+  <li><em>2025.04</em>:  🎉 Our <a href="https://openreview.net/forum?id=mtk8tTKWs0">PIGDreamer</a> is accepted by <strong>ICML 2025</strong>.</li>
+  <li><em>2025.02</em>:  🎉 Our <a href="https://openreview.net/forum?id=2Zan4ATYsh">DivIL</a> is accepted by <strong>TMLR 2025</strong>.</li>
+  <li><em>2024.09</em>: 🎉 Our <a href="https://arxiv.org/abs/2410.05695">Reasoning Boundary</a> is accepted by <strong>NeurIPS 2024 (Oral)</strong>.</li>
+  <li><em>2024.03</em>: 🎉 Our <a href="https://ojs.aaai.org/index.php/AAAI/article/view/29536">MISTS</a> is accepted by <strong>AAAI 2024 (Oral)</strong>.</li>
+  </ul>
+</details>

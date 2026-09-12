@@ -27,6 +27,7 @@ author:
   location         : "Hong Kong, China"
   employer         :
   pubmed           : 
+  cv               : "/files/resume_wjq_en.pdf"
   googlescholar    : "https://scholar.google.com/citations?user=UKlrS74AAAAJ"
   email            : "wjqkoko@gmail.com"
   researchgate     :  # e.g., "https://www.researchgate.net/profile/yourprofile"
@@ -43,7 +44,7 @@ author:
   instagram        :
   impactstory      : # e.g., "https://profiles.impactstory.org/u/xxxx-xxxx-xxxx-xxxx"
   lastfm           :
-  linkedin         : # e.g., "linkedin username"
+  linkedin         : "jiaqi-wang-08a4aa433"
   dblp             : # e.g., "https://dblp.org/pid/xx/xxxx.html"
   orcid            : # e.g., "https://orcid.org/xxxx"
   pinterest        :
@@ -51,7 +52,7 @@ author:
   stackoverflow    : # http://stackoverflow.com/users/123456/username
   steam            :
   tumblr           :
-  twitter          : 
+  twitter          : "wjqkoko"
   vine             :
   weibo            :
   xing             :
