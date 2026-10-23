@@ -1,5 +1,6 @@
 # 🔥 News
 
+- *2026.10*: 🚀 [MiniMax M3.1-Flash](https://www.minimax.io/blog/minimax-m31f) is released and [open-sourced](https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash)! A next-generation Flash model with a generational leap in agentic tasks, coding, computer use, and cybersecurity. Glad to have contributed to its RL training.
 - *2026.09*: 🎉 Our [VideoASMR-Bench dataset](https://huggingface.co/datasets/kolerk/Video_Reality_Test) has now surpassed **6k downloads**.
 - *2026.07*:  🎉 Our [TCOD](https://arxiv.org/abs/2604.24005) is accepted by **COLM 2026**.
 - *2026.05*: 🎉 Our [VideoASMR-Bench](https://video-reality-test.github.io/) was accepted by **CVPR 2026 VGBE Workshop**. The [dataset](https://huggingface.co/datasets/kolerk/Video_Reality_Test) is publicly available.

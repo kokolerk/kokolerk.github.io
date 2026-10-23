@@ -9,7 +9,7 @@
     </div>
     <div class="career-details">
       <p class="career-team">Foundation Model Team · Reinforcement Learning Group</p>
-      <p>Working on MOPD and RL scaling, contributing to releases of the M-series LLMs.</p>
+      <p>Working on MOPD and RL scaling, contributing to releases of the M-series LLMs, including <a href="https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash">MiniMax M3.1-Flash</a>.</p>
     </div>
   </article>
   <article class="career-card">
@@ -19,7 +19,7 @@
       <div><span class="career-company">Tongyi Lab, Alibaba Group</span><div class="career-role">Research Intern <span class="career-location">· Hangzhou</span></div></div>
     </div>
     <div class="career-details">
-      <p>Research on LLM reasoning, reinforcement learning, and on-policy distillation.</p>
+      <p>Research on LLM reasoning, reinforcement learning, and on-policy distillation. Contributed to <a href="https://github.com/agentscope-ai/Trinity-RFT">Trinity-RFT</a>.</p>
     </div>
   </article>
   <article class="career-card">
