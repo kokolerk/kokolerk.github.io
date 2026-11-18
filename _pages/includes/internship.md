@@ -2,7 +2,7 @@
 
 <div class="career-list">
   <article class="career-card career-card--current">
-    <div class="career-date">2026.06 — Present</div>
+    <div class="career-date">2026.11 — Present</div>
     <div class="career-header">
       <img class="career-logo" src="/images/organizations/minimax.png" alt="MiniMax logo" width="44" height="44">
       <div><a class="career-company" href="https://www.minimaxi.com/">MiniMax</a><div class="career-role">Top Talent Intern Program <span class="career-location">· Beijing</span></div></div>
